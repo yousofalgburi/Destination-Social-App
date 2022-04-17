@@ -4,6 +4,7 @@ import bodyParser from "body-parser"
 import mongoose from "mongoose"
 
 import homeRoutes from "./routes/home.js"
+import userRoutes from "./routes/user.js"
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -13,9 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 
 app.use("/home", homeRoutes)
-app.get("/", (req, res) => {
-  res.send("Hello World")
-})
+app.use("/user", userRoutes)
 
 mongoose
   .connect("mongodb://localhost:27017/Destination", {
