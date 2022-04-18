@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { authActions } from '../../store/auth'
-import { signIn } from '../../api/api'
+import { signIn, signUp } from '../../api/api'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -34,9 +34,11 @@ const Auth = () => {
     confirmPassword: '',
   })
   const [isSignup, setIsSignup] = useState(false)
-  const [show, setShow] = useState(false)
-  const [show2, setShow2] = useState(false)
+  const [showPassword1, setShowPassword1] = useState(false)
+  const [showPassword2, setShowPassword2] = useState(false)
   const [passwordMatch, setPasswordMatch] = useState(false)
+  const [userAlreadyExists, setAlreadyExists] = useState(false)
+  const [wrongLoginCredentials, setWrongLoginCredentials] = useState(false)
 
   const switchMode = () => {
     setForm({
@@ -57,8 +59,13 @@ const Auth = () => {
     }
 
     if (isSignup) {
-      dispatch(authActions.signup())
-      navigate('/')
+      try {
+        const { data } = await signUp(form)
+        dispatch(authActions.signup({ data }))
+        navigate('/')
+      } catch (e) {
+        setAlreadyExists(true)
+      }
     } else {
       try {
         const { data } = await signIn({
@@ -68,8 +75,8 @@ const Auth = () => {
 
         dispatch(authActions.signin({ data }))
         navigate('/')
-      } catch (error) {
-        console.log('wrong credentials')
+      } catch (e) {
+        setWrongLoginCredentials(true)
       }
     }
   }
@@ -77,9 +84,14 @@ const Auth = () => {
   const handleChange = e =>
     setForm({ ...form, [e.target.name]: e.target.value })
 
-  const handleShowClick = () => setShow(show => !show)
-  const handleShowClick2 = () => setShow2(show2 => !show2)
+  const handleShowPassword1 = () =>
+    setShowPassword1(showPassword1 => !showPassword1)
+  const handleShowPassword2 = () =>
+    setShowPassword2(showPassword2 => !showPassword2)
+
   const handleAlertClose = () => setPasswordMatch(false)
+  const handleWrongCredentialsAlertClose = () => setWrongLoginCredentials(false)
+  const handleUserAlreadyExistsClose = () => setAlreadyExists(false)
 
   return (
     <Container p={0}>
@@ -99,11 +111,28 @@ const Auth = () => {
             <Heading>{!isSignup ? 'Sign in' : 'Sign up'}</Heading>
 
             <SimpleGrid columns={2} columnGap={3} rowGap={6} w="full">
+              {userAlreadyExists && isSignup && (
+                <GridItem colSpan={2}>
+                  <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>
+                      A user with that email already exists
+                    </AlertTitle>
+                    <CloseButton
+                      onClick={handleUserAlreadyExistsClose}
+                      position="absolute"
+                      right="8px"
+                      top="8px"
+                    />
+                  </Alert>
+                </GridItem>
+              )}
+
               {passwordMatch && isSignup && (
                 <GridItem colSpan={2}>
                   <Alert status="error">
                     <AlertIcon />
-                    <AlertTitle mr={2}>Passwords Do Not Match</AlertTitle>
+                    <AlertTitle mr={2}>Passwords do not match</AlertTitle>
                     <CloseButton
                       onClick={handleAlertClose}
                       position="absolute"
@@ -120,7 +149,7 @@ const Auth = () => {
                     <AlertIcon />
                     <AlertTitle mr={2}>Wrong Login credentials</AlertTitle>
                     <CloseButton
-                      onClick={handleAlertClose}
+                      onClick={handleWrongCredentialsAlertClose}
                       position="absolute"
                       right="8px"
                       top="8px"
@@ -180,7 +209,7 @@ const Auth = () => {
                   <Input
                     id="password"
                     placeholder="Password"
-                    type={show ? 'text' : 'password'}
+                    type={showPassword1 ? 'text' : 'password'}
                     name="password"
                     onChange={handleChange}
                     value={form.password}
@@ -188,8 +217,8 @@ const Auth = () => {
                   />
 
                   <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handleShowClick}>
-                      {show ? 'Hide' : 'Show'}
+                    <Button h="1.75rem" size="sm" onClick={handleShowPassword1}>
+                      {showPassword1 ? 'Hide' : 'Show'}
                     </Button>
                   </InputRightElement>
                 </InputGroup>
@@ -204,7 +233,7 @@ const Auth = () => {
                     <Input
                       id="confirmPassword"
                       placeholder="Password Again"
-                      type={show2 ? 'text' : 'password'}
+                      type={showPassword2 ? 'text' : 'password'}
                       name="confirmPassword"
                       onChange={handleChange}
                       value={form.confirmPassword}
@@ -212,8 +241,12 @@ const Auth = () => {
                     />
 
                     <InputRightElement width="4.5rem">
-                      <Button h="1.75rem" size="sm" onClick={handleShowClick2}>
-                        {show2 ? 'Hide' : 'Show'}
+                      <Button
+                        h="1.75rem"
+                        size="sm"
+                        onClick={handleShowPassword2}
+                      >
+                        {showPassword2 ? 'Hide' : 'Show'}
                       </Button>
                     </InputRightElement>
                   </InputGroup>

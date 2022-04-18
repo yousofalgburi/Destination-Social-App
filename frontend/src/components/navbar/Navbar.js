@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 import decode from 'jwt-decode'
-import { LOGOUT } from '../../constants/actionTypes'
+
+import { useDispatch } from 'react-redux'
+import { authActions } from '../../store/auth'
 
 import {
   Box,
@@ -22,7 +23,7 @@ const Navbar = () => {
   const navigate = useNavigate()
 
   const logout = () => {
-    dispatch({ type: LOGOUT })
+    dispatch(authActions.logout())
     setUser(null)
     navigate('/auth')
   }
