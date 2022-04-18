@@ -1,18 +1,16 @@
 import React from 'react'
 import { ChakraProvider, theme } from '@chakra-ui/react'
-import { Route, Routes, Redirect } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import Home from './components/home/Home'
+import Auth from './components/auth/Auth'
 
 const App = () => {
   return (
     <ChakraProvider theme={theme}>
       <Routes>
-        <Route path="/home">
-          <Home />
-        </Route>
-        <Route path="*">
-          <Redirect to="/home" />
-        </Route>
+        <Route path="/home" element={<Home />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="*" element={<Navigate replace to="/home" />} />
       </Routes>
     </ChakraProvider>
   )
