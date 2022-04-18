@@ -1,7 +1,8 @@
 import { useState } from 'react'
-
 import { useDispatch } from 'react-redux'
 import { authActions } from '../../store/auth'
+import { signIn } from '../../api/api'
+import { useNavigate } from 'react-router-dom'
 
 import {
   FormLabel,
@@ -23,6 +24,7 @@ import {
 
 const Auth = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const [form, setForm] = useState({
     firstName: '',
@@ -47,7 +49,7 @@ const Auth = () => {
     setIsSignup(prevIsSignup => !prevIsSignup)
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
 
     if (isSignup && form.password !== form.confirmPassword) {
@@ -55,9 +57,20 @@ const Auth = () => {
     }
 
     if (isSignup) {
-      dispatch(authActions.signup)
+      dispatch(authActions.signup())
+      navigate('/')
     } else {
-      dispatch(authActions.signin)
+      try {
+        const { data } = await signIn({
+          email: form.email,
+          password: form.password,
+        })
+
+        dispatch(authActions.signin({ data }))
+        navigate('/')
+      } catch (error) {
+        console.log('wrong credentials')
+      }
     }
   }
 
@@ -91,6 +104,21 @@ const Auth = () => {
                   <Alert status="error">
                     <AlertIcon />
                     <AlertTitle mr={2}>Passwords Do Not Match</AlertTitle>
+                    <CloseButton
+                      onClick={handleAlertClose}
+                      position="absolute"
+                      right="8px"
+                      top="8px"
+                    />
+                  </Alert>
+                </GridItem>
+              )}
+
+              {wrongLoginCredentials && !isSignup && (
+                <GridItem colSpan={2}>
+                  <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>Wrong Login credentials</AlertTitle>
                     <CloseButton
                       onClick={handleAlertClose}
                       position="absolute"
