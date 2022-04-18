@@ -3,6 +3,6 @@ import * as createControllers from "../controllers/create.js"
 import auth from "../middleware/auth.js"
 const router = express.Router()
 
-router.post("/", createControllers.createPost)
+router.post("/", auth, createControllers.createPost)
 
 export default router
