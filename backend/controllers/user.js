@@ -31,7 +31,7 @@ export const signin = async (req, res) => {
 }
 
 export const signup = async (req, res) => {
-  const { email, password, firstName, lastName } = req.body
+  const { email, password, firstName, lastName, confirmPassword } = req.body
 
   try {
     const userExists = await UserModel.findOne({ email })
@@ -39,6 +39,9 @@ export const signup = async (req, res) => {
       return res
         .status(400)
         .json({ message: "A user with that email already exists." })
+
+    if (password !== confirmPassword)
+      return res.status(400).json({ message: "passwords do not match" })
 
     let hashedPassowrd = await bcrypt.hash(password, 12)
     const result = await UserModel.create({

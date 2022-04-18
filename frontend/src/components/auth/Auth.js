@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { authActions } from '../../store/auth'
-import { signIn, signUp } from '../../api/api'
 import { useNavigate } from 'react-router-dom'
+import { signIn, signUp } from '../../api/api'
 
 import {
   FormLabel,
@@ -16,16 +16,14 @@ import {
   InputGroup,
   InputRightElement,
   Box,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  CloseButton,
 } from '@chakra-ui/react'
+import AuthFormAlert from './AuthFormAlert'
 
 const Auth = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const [isSignup, setIsSignup] = useState(false)
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -33,13 +31,17 @@ const Auth = () => {
     password: '',
     confirmPassword: '',
   })
-  const [isSignup, setIsSignup] = useState(false)
+
+  // SIGN UP SETTERS
   const [showPassword1, setShowPassword1] = useState(false)
   const [showPassword2, setShowPassword2] = useState(false)
   const [passwordMatch, setPasswordMatch] = useState(false)
   const [userAlreadyExists, setAlreadyExists] = useState(false)
+
+  // LOGIN SETTERS
   const [wrongLoginCredentials, setWrongLoginCredentials] = useState(false)
 
+  // SWITCH BETWEEN SIGN UP AND LOG IN
   const switchMode = () => {
     setForm({
       firstName: '',
@@ -51,6 +53,7 @@ const Auth = () => {
     setIsSignup(prevIsSignup => !prevIsSignup)
   }
 
+  // HANDLE FORM SUBMISSION
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -81,14 +84,17 @@ const Auth = () => {
     }
   }
 
+  // HANDLE FORM CHANGE
   const handleChange = e =>
     setForm({ ...form, [e.target.name]: e.target.value })
 
+  // HANDLE PASSWORD SHOWERS
   const handleShowPassword1 = () =>
     setShowPassword1(showPassword1 => !showPassword1)
   const handleShowPassword2 = () =>
     setShowPassword2(showPassword2 => !showPassword2)
 
+  // HANDLE ALERT CLOSERS
   const handleAlertClose = () => setPasswordMatch(false)
   const handleWrongCredentialsAlertClose = () => setWrongLoginCredentials(false)
   const handleUserAlreadyExistsClose = () => setAlreadyExists(false)
@@ -112,50 +118,24 @@ const Auth = () => {
 
             <SimpleGrid columns={2} columnGap={3} rowGap={6} w="full">
               {userAlreadyExists && isSignup && (
-                <GridItem colSpan={2}>
-                  <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle mr={2}>
-                      A user with that email already exists
-                    </AlertTitle>
-                    <CloseButton
-                      onClick={handleUserAlreadyExistsClose}
-                      position="absolute"
-                      right="8px"
-                      top="8px"
-                    />
-                  </Alert>
-                </GridItem>
+                <AuthFormAlert
+                  message="A user with that email already exists"
+                  handleClose={handleUserAlreadyExistsClose}
+                />
               )}
 
               {passwordMatch && isSignup && (
-                <GridItem colSpan={2}>
-                  <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle mr={2}>Passwords do not match</AlertTitle>
-                    <CloseButton
-                      onClick={handleAlertClose}
-                      position="absolute"
-                      right="8px"
-                      top="8px"
-                    />
-                  </Alert>
-                </GridItem>
+                <AuthFormAlert
+                  message="Passwords do not match"
+                  handleClose={handleAlertClose}
+                />
               )}
 
               {wrongLoginCredentials && !isSignup && (
-                <GridItem colSpan={2}>
-                  <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle mr={2}>Wrong Login credentials</AlertTitle>
-                    <CloseButton
-                      onClick={handleWrongCredentialsAlertClose}
-                      position="absolute"
-                      right="8px"
-                      top="8px"
-                    />
-                  </Alert>
-                </GridItem>
+                <AuthFormAlert
+                  message="Wrong Login credentials"
+                  handleClose={handleWrongCredentialsAlertClose}
+                />
               )}
 
               {isSignup && (
@@ -204,7 +184,6 @@ const Auth = () => {
 
               <GridItem colSpan={isSignup ? 1 : 2}>
                 <FormLabel htmlFor="password">Password</FormLabel>
-
                 <InputGroup>
                   <Input
                     id="password"
@@ -215,7 +194,6 @@ const Auth = () => {
                     value={form.password}
                     required
                   />
-
                   <InputRightElement width="4.5rem">
                     <Button h="1.75rem" size="sm" onClick={handleShowPassword1}>
                       {showPassword1 ? 'Hide' : 'Show'}
@@ -239,7 +217,6 @@ const Auth = () => {
                       value={form.confirmPassword}
                       required
                     />
-
                     <InputRightElement width="4.5rem">
                       <Button
                         h="1.75rem"

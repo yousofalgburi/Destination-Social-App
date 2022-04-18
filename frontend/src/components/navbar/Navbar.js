@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  Link as ReachLink,
+} from 'react-router-dom'
 import decode from 'jwt-decode'
 
 import { useDispatch } from 'react-redux'
@@ -45,9 +50,17 @@ const Navbar = () => {
   return (
     <Flex bg="gray.600" p={3}>
       <Box p="2">
-        <Heading color="white" size="md">
-          <Link to="/">Destination</Link>
-        </Heading>
+        <HStack spacing={5}>
+          <Heading color="white" size="md">
+            <Link to="/">Destination</Link>
+          </Heading>
+          <Link as={ReachLink} to="/home">
+            Home
+          </Link>
+          <Link as={ReachLink} to="/explore">
+            Explore
+          </Link>
+        </HStack>
       </Box>
 
       <Spacer />
