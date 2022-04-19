@@ -1,13 +1,6 @@
-import { useState, useEffect } from 'react'
-import {
-  Link,
-  useNavigate,
-  useLocation,
-  Link as ReachLink,
-} from 'react-router-dom'
-import decode from 'jwt-decode'
+import { Link, useNavigate, Link as ReachLink } from 'react-router-dom'
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { authActions } from '../../store/auth'
 
 import {
@@ -22,30 +15,14 @@ import {
 import { ColorModeSwitcher } from '../../ColorModeSwitcher'
 
 const Navbar = () => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+  const currentUser = useSelector(state => state.currentUser)
   const dispatch = useDispatch()
-  const location = useLocation()
   const navigate = useNavigate()
 
   const logout = () => {
     dispatch(authActions.logout())
-    setUser(null)
     navigate('/auth')
   }
-
-  useEffect(() => {
-    const token = user?.token
-
-    if (token) {
-      const decodedToken = decode(token)
-
-      if (decodedToken.exp * 1000 < new Date().getTime()) {
-        logout()
-      }
-    }
-
-    setUser(JSON.parse(localStorage.getItem('profile')))
-  }, [location, logout])
 
   return (
     <Flex bg="gray.600" p={3}>
@@ -68,9 +45,9 @@ const Navbar = () => {
       <Box>
         <HStack>
           <ColorModeSwitcher />
-          {user?.result ? (
+          {currentUser ? (
             <>
-              <Text color="whiteAlpha.900">Welcome! {user?.result.name}</Text>
+              <Text color="whiteAlpha.900">Welcome! {currentUser.name}</Text>
               <Button onClick={logout}>Logout</Button>
             </>
           ) : (

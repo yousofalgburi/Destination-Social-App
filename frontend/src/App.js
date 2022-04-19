@@ -1,6 +1,9 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { ChakraProvider, theme } from '@chakra-ui/react'
 import { Route, Routes, Navigate } from 'react-router-dom'
+import decode from 'jwt-decode'
+import { authActions } from './store/auth'
+import { useDispatch } from 'react-redux'
 
 // RENDER COMPONENTS
 import Home from './components/home/Home'
@@ -10,6 +13,25 @@ import Explore from './components/explore/Explore'
 import Footer from './components/footer/Footer'
 
 const App = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('profile'))
+    const token = user?.token
+
+    if (token) {
+      const decodedToken = decode(token)
+
+      if (decodedToken.exp * 1000 < new Date().getTime()) {
+        dispatch(authActions.logout())
+      }
+    }
+
+    dispatch(
+      authActions.setUser({ data: JSON.parse(localStorage.getItem('profile')) })
+    )
+  }, [dispatch])
+
   return (
     <ChakraProvider theme={theme}>
       <Navbar />
