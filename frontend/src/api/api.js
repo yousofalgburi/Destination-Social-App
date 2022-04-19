@@ -12,5 +12,9 @@ API.interceptors.request.use(req => {
   return req
 })
 
+export const createPost = newPost => API.post('/create', newPost)
+export const updatePost = (id, updatedPost) =>
+  API.patch(`/posts/${id}`, updatedPost)
+
 export const signIn = data => API.post('/user/signin', data)
 export const signUp = data => API.post('/user/signup', data)

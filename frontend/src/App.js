@@ -11,6 +11,7 @@ import Auth from './components/auth/Auth'
 import Navbar from './components/navbar/Navbar'
 import Explore from './components/explore/Explore'
 import Footer from './components/footer/Footer'
+import CreatePost from './components/create/CreatePost'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -38,6 +39,7 @@ const App = () => {
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/create" element={<CreatePost />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="*" element={<Navigate replace to="/home" />} />
       </Routes>

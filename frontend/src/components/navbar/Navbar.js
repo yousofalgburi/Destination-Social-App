@@ -1,4 +1,4 @@
-import { Link, useNavigate, Link as ReachLink } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { authActions } from '../../store/auth'
@@ -13,6 +13,7 @@ import {
   HStack,
 } from '@chakra-ui/react'
 import { ColorModeSwitcher } from '../../ColorModeSwitcher'
+import NavBarLink from './NavBarLink'
 
 const Navbar = () => {
   const currentUser = useSelector(state => state.currentUser)
@@ -31,12 +32,10 @@ const Navbar = () => {
           <Heading color="white" size="md">
             <Link to="/">Destination</Link>
           </Heading>
-          <Link as={ReachLink} to="/home">
-            Home
-          </Link>
-          <Link as={ReachLink} to="/explore">
-            Explore
-          </Link>
+
+          <NavBarLink whereTo={'/home'} whereToText="Home" />
+          <NavBarLink whereTo={'/explore'} whereToText="Explore" />
+          <NavBarLink whereTo={'/create'} whereToText="Create A New Post" />
         </HStack>
       </Box>
 
