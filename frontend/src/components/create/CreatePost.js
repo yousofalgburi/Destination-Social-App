@@ -15,7 +15,8 @@ import {
   Textarea,
 } from '@chakra-ui/react'
 
-const CreatePost = ({ currentId, setCurrentId }) => {
+const CreatePost = () => {
+  const [currentId, setCurrentId] = useState(0)
   const [postData, setPostData] = useState({
     title: '',
     message: '',
