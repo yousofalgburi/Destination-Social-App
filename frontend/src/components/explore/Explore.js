@@ -1,5 +1,7 @@
+import Posts from './posts/Posts'
+
 const Explore = () => {
-  return <h1>Explore page</h1>
+  return <Posts />
 }
 
 export default Explore

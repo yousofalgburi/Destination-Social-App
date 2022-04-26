@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import FileBase from 'react-file-base64'
 import { postsActions } from '../../store/posts'
 import { createPost, updatePost } from '../../api/api'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Box,
@@ -17,6 +18,7 @@ import {
 
 const CreatePost = () => {
   const [currentId, setCurrentId] = useState(0)
+  const navigate = useNavigate()
   const [postData, setPostData] = useState({
     title: '',
     message: '',
@@ -46,6 +48,7 @@ const CreatePost = () => {
       try {
         const { data } = await createPost(postData)
         dispatch(postsActions.createPost({ ...data, name: currentUser?.name }))
+        navigate('/')
       } catch (e) {
         console.log(e)
       }
@@ -55,6 +58,7 @@ const CreatePost = () => {
       try {
         const { data } = await updatePost(postData)
         dispatch(postsActions.updatePost({ ...data, name: currentUser?.name }))
+        navigate('/')
       } catch (e) {
         console.log(e)
       }
